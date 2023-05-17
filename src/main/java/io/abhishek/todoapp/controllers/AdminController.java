@@ -1,4 +1,4 @@
-package io.abhishek.todoapp.controller;
+package io.abhishek.todoapp.controllers;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/admin")
 @PreAuthorize("hasRole('ADMIN')")
+@Hidden
 public class AdminController {
 
     @GetMapping

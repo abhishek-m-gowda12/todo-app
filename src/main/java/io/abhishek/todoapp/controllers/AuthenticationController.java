@@ -1,4 +1,4 @@
-package io.abhishek.todoapp.controller;
+package io.abhishek.todoapp.controllers;
 
 import io.abhishek.todoapp.dtos.AuthenticationRequest;
 import io.abhishek.todoapp.dtos.AuthenticationResponse;
