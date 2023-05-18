@@ -5,10 +5,11 @@ import io.abhishek.todoapp.config.JwtService;
 import io.abhishek.todoapp.dtos.AuthenticationRequest;
 import io.abhishek.todoapp.dtos.AuthenticationResponse;
 import io.abhishek.todoapp.dtos.RegisterRequest;
-import io.abhishek.todoapp.entities.Token;
+import io.abhishek.todoapp.entities.RoleEntity;
+import io.abhishek.todoapp.entities.TokenEntity;
+import io.abhishek.todoapp.entities.UserEntity;
 import io.abhishek.todoapp.repository.TokenRepository;
 import io.abhishek.todoapp.entities.enums.TokenType;
-import io.abhishek.todoapp.entities.User;
 import io.abhishek.todoapp.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,13 +35,18 @@ public class AuthenticationServiceImpl {
 
     public AuthenticationResponse register(RegisterRequest request) {
 
-        var user = User.builder()
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setRole(request.getRole());
+
+        var user = UserEntity.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
                 .build();
+
+        user.setRoles(List.of(roleEntity));
+
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -69,9 +76,9 @@ public class AuthenticationServiceImpl {
                 .build();
     }
 
-    private void saveUserToken(User user, String jwtToken) {
-        var token = Token.builder()
-                .user(user)
+    private void saveUserToken(UserEntity userEntity, String jwtToken) {
+        var token = TokenEntity.builder()
+                .userEntity(userEntity)
                 .tokenValue(jwtToken)
                 .tokenType(TokenType.BEARER)
                 .expired(false)
@@ -80,13 +87,13 @@ public class AuthenticationServiceImpl {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+    private void revokeAllUserTokens(UserEntity userEntity) {
+        var validUserTokens = tokenRepository.findAllValidTokenByUser(userEntity.getId());
         if (validUserTokens.isEmpty())
             return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
+        validUserTokens.forEach(tokenEntity -> {
+            tokenEntity.setExpired(true);
+            tokenEntity.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
     }

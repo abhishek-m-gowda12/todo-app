@@ -3,19 +3,19 @@ package io.abhishek.todoapp.entities;
 import io.abhishek.todoapp.entities.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.experimental.SuperBuilder;
 
-import java.util.Objects;
+import java.io.Serializable;
 
 @Getter
 @Setter
 @ToString
-@Builder
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "token_info", schema = "application")
-public class Token {
+public class TokenEntity extends BaseEntity implements Serializable  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +24,7 @@ public class Token {
     @Column(name = "token", unique = true)
     private String tokenValue;
 
+    @Builder.Default()
     @Enumerated(EnumType.STRING)
     private TokenType tokenType = TokenType.BEARER;
 
@@ -34,5 +35,5 @@ public class Token {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
-    private User user;
+    private UserEntity userEntity;
 }

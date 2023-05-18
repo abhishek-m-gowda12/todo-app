@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'io.abhishek.todo-app' is invalid and this project uses 'io.abhishek.todoapp' instead.
+* The original package name 'io.abhishek.todoEntity-app' is invalid and this project uses 'io.abhishek.todoapp' instead.
 
 # Getting Started
 
